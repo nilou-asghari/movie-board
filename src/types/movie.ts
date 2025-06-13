@@ -11,3 +11,8 @@ export interface MovieCardProps {
   genre: string;
   posterPath: string | null;
 }
+
+export interface Genre {
+  id: number;
+  name: string;
+}

@@ -2,15 +2,24 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MovieCard from "../components/MovieCard";
 import type { Movie, Genre } from "../types/movie";
+import useDebounce from "../hooks/useDebounce";
+import useSearch from "../hooks/useSearch";
 
 const Home: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const {
+    results: searchResults,
+    loading: searchLoading,
+    error: searchError,
+  } = useSearch(debouncedSearchTerm);
 
   const apiKey = "9e3a15fbadfd9ddb146c37535b599e63";
   const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
-
   const genreUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
 
   const fetchMovies = async () => {
@@ -19,7 +28,7 @@ const Home: React.FC = () => {
       setMovies(response.data.results);
       console.log("Movies fetched:", response.data.results);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching movies:", error);
     } finally {
       setLoading(false);
     }
@@ -27,11 +36,11 @@ const Home: React.FC = () => {
 
   const fetchGenres = async () => {
     try {
-      const response = await axios.get<{ results: Genre[] }>(genreUrl);
+      const response = await axios.get<{ genres: Genre[] }>(genreUrl);
       setGenres(response.data.genres);
-      console.log("genre fetched:", response.data.genres);
+      console.log("Genres fetched:", response.data.genres);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching genres:", error);
     } finally {
       setLoading(false);
     }
@@ -40,12 +49,12 @@ const Home: React.FC = () => {
   useEffect(() => {
     fetchGenres();
     fetchMovies();
-  }, []);
+  });
 
   const GetGenresName = (genreIds: number[]): string => {
-    if (genreIds.length === 0) return "unknown";
+    if (genreIds.length === 0) return "Unknown";
     const genre = genres.find((g) => g.id === genreIds[0]);
-    return genre ? genre.name : "unknown";
+    return genre ? genre.name : "Unknown";
   };
 
   return (
@@ -53,21 +62,58 @@ const Home: React.FC = () => {
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Movie Board
       </h1>
-      {loading ? (
-        <p className="text-center text-gray-600 text-lg">Loading Movies...</p>
+
+      <div className="mb-6">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search movies..."
+          className="w-full p-3 border border-gray-300 rounded-md"
+        />
+      </div>
+
+      {searchTerm ? (
+        <>
+          {searchLoading ? (
+            <p>Loading search results...</p>
+          ) : searchError ? (
+            <p>{searchError}</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {searchResults.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  genre={GetGenresName(movie.genre_ids)}
+                  posterPath={movie.poster_path}
+                />
+              ))}
+            </div>
+          )}
+        </>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              title={movie.title}
-              genre={
-                movie.genre_ids?.length ? GetGenresName(movie.genre_ids) : "N/A"
-              }
-              posterPath={movie.poster_path}
-            />
-          ))}
-        </div>
+        <>
+          {loading ? (
+            <p>Loading Movies...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {movies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  title={movie.title}
+                  genre={
+                    movie.genre_ids?.length
+                      ? GetGenresName(movie.genre_ids)
+                      : "N/A"
+                  }
+                  posterPath={movie.poster_path}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

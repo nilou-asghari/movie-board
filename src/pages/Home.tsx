@@ -102,6 +102,7 @@ const Home: React.FC = () => {
               {movies.map((movie) => (
                 <MovieCard
                   key={movie.id}
+                  id={movie.id}
                   title={movie.title}
                   genre={
                     movie.genre_ids?.length

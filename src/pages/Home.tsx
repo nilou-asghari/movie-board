@@ -12,6 +12,7 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const {
     results: searchResults,
     loading: searchLoading,
@@ -19,11 +20,12 @@ const Home: React.FC = () => {
   } = useSearch(debouncedSearchTerm);
 
   const apiKey = "9e3a15fbadfd9ddb146c37535b599e63";
-  const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
+  const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=${currentPage}`;
   const genreUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
 
   const fetchMovies = async () => {
     try {
+      setLoading(true);
       const response = await axios.get<{ results: Movie[] }>(apiUrl);
       setMovies(response.data.results);
       console.log("Movies fetched:", response.data.results);
@@ -48,8 +50,11 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     fetchGenres();
-    fetchMovies();
   });
+  useEffect(() => {
+    fetchMovies();
+    window.scroll(0, 0);
+  }, [currentPage]);
 
   const GetGenresName = (genreIds: number[]): string => {
     if (genreIds.length === 0) return "Unknown";
@@ -116,6 +121,22 @@ const Home: React.FC = () => {
           )}
         </>
       )}
+      <div className="flex justify-center mt-8 gap-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 disabled:opacity-50"
+        >
+          Pervious
+        </button>
+        <span className="px-4 py-2 font-semibold">Page {currentPage}</span>
+        <button
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

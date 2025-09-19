@@ -1,4 +1,4 @@
-import { JwtPayload } from "../../utils/jwtPayload"; // مسیر درست رو با توجه به ساختار پروژه‌ت بذار
+import { JwtPayload } from "../../utils/jwtPayload";
 
 declare module "express-serve-static-core" {
   interface Request {

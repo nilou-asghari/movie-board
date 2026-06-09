@@ -19,9 +19,9 @@ app.use("/api/favorites", favoritesRouter);
 mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => {
-    console.log("✅ MongoDB connected");
+    console.log(" MongoDB connected");
     app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`),
+      console.log(` Server running on http://localhost:${PORT}`),
     );
   })
   .catch((err) => {

@@ -2,36 +2,44 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import type { Movie } from "../types/movie";
 
-const useSearch = (query: string, debounceDelay: number = 500) => {
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+const useSearch = (query: string) => {
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const apiKey = "9e3a15fbadfd9ddb146c37535b599e63";
 
   useEffect(() => {
-    if (!query) {
+    if (!query.trim()) {
       setResults([]);
+      setLoading(false);
       return;
     }
+
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         const response = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${encodeURIComponent(
-            query
-          )}`
+          `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(query)}`,
         );
-        setResults(response.data.results);
-      } catch (err) {
-        setError("Failed to fetch search results");
+        if (!cancelled) setResults(response.data.results);
+      } catch {
+        if (!cancelled) setError("Failed to fetch search results");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-    const timeoutId = setTimeout(fetchData, debounceDelay);
-    return () => clearTimeout(timeoutId);
-  }, [query, debounceDelay]);
+
+    fetchData();
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
+
   return { results, loading, error };
 };
+
 export default useSearch;

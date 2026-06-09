@@ -1,54 +1,84 @@
-# React + TypeScript + Vite
+# CineBoard 🎬
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack movie discovery app I built to practice React, TypeScript, and Node.js.
+Users can browse popular movies, search by title, filter by genre, and save favorites.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Frontend**
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- React Router v7
+- Axios
+- Tailwind CSS + custom CSS
+- TMDB API
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Backend**
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT Authentication
+- bcrypt
+
+## Features
+
+- 🔍 Real-time movie search with debounce
+- 🎭 Genre filtering
+- 📄 Paginated browsing
+- 🎬 Detailed movie pages
+- 🔐 Register / Login with JWT
+- ♥ Save and manage favorite movies
+
+## Getting Started
+
+### Environment Variables
+
+Root `.env`:
+
+```
+VITE_TMDB_API_KEY=your_tmdb_api_key
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`server/.env`:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
 ```
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+PORT=5000
+```
+
+### Run the app
+
+```bash
+# Frontend
+npm install
+npm run dev
+
+# Backend
+cd server
+npm install
+npm run dev
+```
+
+## Project Structure
+
+```
+src/
+├── api/          # Axios instance with JWT interceptor
+├── components/   # Navbar, MovieCard
+├── context/      # AuthContext (login, register, logout, favorites)
+├── hooks/        # useDebounce, useSearch
+├── pages/        # Home, MovieDetails, Login, Register, Favorites
+└── types/        # TypeScript interfaces
+
+server/
+├── middleware/   # JWT auth middleware
+├── models/       # User model (email, password, favorites)
+├── routes/       # /auth and /favorites endpoints
+└── utils/        # JWT payload type
+```
+
+## Live Demo
+
+Frontend: coming soon  
+Backend: coming soon

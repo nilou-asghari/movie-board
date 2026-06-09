@@ -23,7 +23,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     res.status(200).json({ token });
@@ -50,7 +50,7 @@ router.post("/register", async (req: Request, res: Response) => {
     const token = jwt.sign(
       { id: newUser._id },
       process.env.JWT_SECRET as string,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
     res.status(201).json({
       message: "User registered successfully",
@@ -69,7 +69,6 @@ router.post("/register", async (req: Request, res: Response) => {
 router.get("/profile", authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    console.log("Decoded user:", req.user);
 
     const user = await User.findById(userId).select("-password");
     if (!user) return res.status(404).json({ message: "user not found" });

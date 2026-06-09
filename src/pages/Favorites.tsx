@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import type { MovieDetail } from "../types/movie";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
 const Favorites: React.FC = () => {
   const { user, toggleFavorite } = useAuth();
   const navigate = useNavigate();

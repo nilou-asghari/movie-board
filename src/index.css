@@ -848,10 +848,6 @@ img {
   margin-top: 0.3rem;
 }
 
-/* ── Home page ───────────────────────────────────── */
-.page-home {
-}
-
 /* ── Fade animation ──────────────────────────────── */
 @keyframes fade-in {
   from {

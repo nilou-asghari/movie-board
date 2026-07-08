@@ -80,5 +80,5 @@ server/
 
 ## Live Demo
 
-Frontend: coming soon  
-Backend: coming soon
+Frontend: [cineboard-app.netlify.app](https://cineboard-app.netlify.app)
+Backend: Deployed on Render
